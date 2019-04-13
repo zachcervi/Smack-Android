@@ -1,9 +1,11 @@
-package com.zachcervi.smack_android
+package com.zachcervi.smack_android.Controller
 
+import Services.AuthService
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.zachcervi.smack_android.R
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -35,6 +37,16 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserClicked(view: View){
+        AuthService.registerUser(this, "zach@cervimobilesolutions.com", "123456"){
+                complete ->
+            if(complete){
+
+            }
+        }
+        
+    }
+
+    fun generateColorClicked(view: View){
         val r = random.nextInt(255)
         val g = random.nextInt(255)
         val b = random.nextInt(255)
@@ -46,9 +58,6 @@ class CreateUserActivity : AppCompatActivity() {
         val savedB = g.toDouble() / 255
 
         avatarColor = "[$savedR, $savedG, $savedB, 1]" //API format
-    }
-
-    fun generateColorClicked(view: View){
 
     }
 }
