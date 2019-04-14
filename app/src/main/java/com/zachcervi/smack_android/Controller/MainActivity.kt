@@ -1,6 +1,7 @@
 package com.zachcervi.smack_android.Controller
 
 import Model.Channel
+import Model.Message
 import Services.AuthService
 import Services.MessageService
 import Services.UserDataService
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         socket.connect()
         socket.on("channelCreated", onNewChannel)
+        socket.on("messageCreated", onNewMessage)
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
             R.string.navigation_drawer_open,
@@ -55,9 +57,6 @@ class MainActivity : AppCompatActivity() {
             updateWithChannel()
         }
 
-
-
-
         if(App.prefs.isLoggedIn){
             AuthService.findUserByEmail(this){}
 
@@ -65,8 +64,6 @@ class MainActivity : AppCompatActivity() {
 
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-
-
 
     }
 
@@ -76,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             BROADCAST_USER_DATA_CHANGE))
 
     }
-
 
     override fun onDestroy() {
 
@@ -175,8 +171,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val onNewMessage = Emitter.Listener {
+        args ->
+        runOnUiThread {
+            val msgBody = args[0] as String
+            val channelId = args[2] as String
+            val userName = args[3] as String
+            val userAvatar = args[4] as String
+            val userAvatarColor = args[5] as String
+            val id = args[6] as String
+            val timeStamp = args[7] as String
+
+            val newMessage = Message(msgBody, userName, channelId, userAvatar, userAvatarColor, id, timeStamp)
+            MessageService.messages.add(newMessage)
+            println(newMessage.message)
+        }
+    }
+
     fun sendMessageBtnClicked(view: View){
-    hideKeyboard()
+        if(App.prefs.isLoggedIn && messageTextField.text.isNotEmpty() && selectedChannel != null){
+            val userId = UserDataService.id
+            val channelId = selectedChannel!!.id
+            socket.emit("newMessage", messageTextField.text.toString(), userId, channelId, UserDataService.name, UserDataService.avatarName, UserDataService.avatarColor)
+            messageTextField.text.clear()
+            hideKeyboard()
+        }
+
     }
 
     fun hideKeyboard() {

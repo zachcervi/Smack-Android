@@ -1,6 +1,7 @@
 package Services
 
 import Model.Channel
+import Model.Message
 import Utilities.URL_GET_CHANNELS
 import android.content.Context
 import android.util.Log
@@ -13,7 +14,7 @@ import kotlin.math.log
 
 object MessageService {
     val channels = ArrayList<Channel>()
-
+    val messages = ArrayList<Message>()
 
     fun getChannels(complete: (Boolean)-> Unit){
          val channelsRequest = object : JsonArrayRequest(Method.GET, URL_GET_CHANNELS, null, Response.Listener { response ->
