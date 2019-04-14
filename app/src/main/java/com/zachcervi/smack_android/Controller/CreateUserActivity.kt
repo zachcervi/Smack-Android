@@ -1,6 +1,7 @@
 package com.zachcervi.smack_android.Controller
 
 import Services.AuthService
+import Services.UserDataService
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -37,6 +38,7 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserClicked(view: View){
+       val userName = createUserNameTxt.text.toString()
         val email = createEmailTxt.text.toString()
         val password = createPasswordTxt.text.toString()
 
@@ -47,8 +49,14 @@ class CreateUserActivity : AppCompatActivity() {
                 AuthService.loginUser(this, email, password){
                     loginSuccess ->
                     if(loginSuccess){
-                        println(AuthService.authToken)
-                        println(AuthService.userEmail)
+                        AuthService.createUser(this, userName, email, userAvatar, avatarColor) {createSuccess ->
+                            if(createSuccess){
+                                println(UserDataService.name)
+                                println(UserDataService.avatarColor)
+                                println(UserDataService.id)
+                                finish()
+                            }
+                        }
                     }
                 }
             }
