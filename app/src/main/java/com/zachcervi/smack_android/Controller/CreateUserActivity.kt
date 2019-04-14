@@ -62,10 +62,12 @@ class CreateUserActivity : AppCompatActivity() {
                                     enableSpinner(false)
                                     finish()
                                 }else {
+                                    println("Create account unsuccessful")
                                     errorToast()
                                 }
                             }
                         }else {
+                            println("Login Unsuccessful")
                             errorToast()
                         }
                     }
